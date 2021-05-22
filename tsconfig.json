@@ -1,0 +1,32 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "ES6"
+    ],
+    "skipLibCheck": true,
+    "removeComments": true,
+    "moduleResolution": "node",
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "sourceMap": true,
+    "target": "ES6",
+    "outDir": "lib",
+    "baseUrl": ".",
+    "paths": {
+      "~utils/*": ["layers/dependencies/nodejs/utils/*" ],
+      "~models/*": ["layers/dependencies/nodejs/models/*" ]
+    },
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["./**/*.ts"],
+  "exclude": [
+    "node_modules/**/*",
+    ".serverless/**/*",
+    ".webpack/**/*",
+    "_warmup/**/*",
+    ".vscode/**/*",
+    "layers/dependencies/nodejs/node_modules"
+  ]
+}

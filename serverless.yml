@@ -1,0 +1,136 @@
+service: tea-api
+
+custom:
+  app-name: the-evolved-alligator-api
+  app-short-anme: tea
+  webpack:
+    webpackConfig: ./webpack.config.js
+    includeModules: true
+  cors:
+    origin: '*'
+    headers:
+      - Accept
+      - Content-Type
+      - Authorization
+      - Referer
+      - X-Amz-Date
+      - X-Api-Key
+      - X-Amz-Security-Token
+      - X-Amz-User-Agent
+      - X-B3-SpanId
+      - X-B3-TraceId
+  authorizer:
+    name: cognito-authorizer
+    type: COGNITO_USER_POOLS
+    arn: !GetAtt CognitoUserPool.Arn
+    claims:
+      - email
+
+  plugins:
+    - serverless-webpack
+    - serverless-offline
+
+package:
+  individually: true
+  exclude:
+    - buildspec.yml
+    - .idea
+    - README.md
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  deploymentBucket:
+    name: tea-backend-build
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - cognito-idp:AdminCreateUser
+            - cognito-idp:AdminDeleteUser
+            - cognito-idp:AdminSetUserPassword
+            - cognito-idp:ListUsers
+            - cognito-idp:ChangePassword
+          Resource:
+            - !GetAtt CognitoUserPool.Arn
+
+layers:
+
+functions:
+
+resources:
+  Resources:
+    CognitoUserPool:
+      Type: AWS::Cognito::UserPool
+      Properties:
+        UserPoolName:
+          Fn::Join:
+            - '-'
+            - - ${self:custom.app-short-name}
+              - user-pool
+        AutoVerifiedAttributes:
+          - email
+        Schema:
+          - Name: email
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 2048
+            DeveloperOnlyAttribute: false
+            Required: false
+            AttributeDataType: String
+            Mutable: true
+          - Name: fullName
+            StringAttributeConstraints:
+              MinLength: 0
+              MaxLength: 2048
+            DeveloperOnlyAttribute: false
+            Required: false
+            AttributeDataType: String
+            Mutable: true
+        UsernameAttributes:
+          - email
+        VerificationMessageTemplate:
+          DefaultEmailOption: CONFIRM_WITH_LINK
+        Policies:
+          PasswordPolicy:
+            MinimumLength: 8
+            RequireLowercase: true
+            RequireNumbers: true
+            RequireSymbols: false
+            RequireUppercase: false
+            TemporaryPasswordValidityDays: 7
+        AdminCreateUserConfig:
+          AllowAdminCreateUserOnly: True
+          InviteMessageTemplate:
+            EmailSubject: "TEA Invite"
+            EmailMessage: "<p>Welcome to TEA</p> <p>Your email {username} has been registered to TEA.</p> <p>To enter to the platform go to <a href=\"https://development.d1kq5fao1tbrzi.amplifyapp.com/auth/token/{####}\">TEA Login</a> and follow the instructions.</p>"
+    CognitoUserPoolClient:
+      Type: AWS::Cognito::UserPoolClient
+      Properties:
+        UserPoolId:
+          Ref: CognitoUserPool
+        ClientName:
+          Fn::Join:
+            - '-'
+            - - ${self:custom.app-short-name}
+              - cognito
+        GenerateSecret: false
+    CognitoUserPoolDomain:
+      Type: AWS::Cognito::UserPoolDomain
+      Properties:
+        Domain: remona
+        UserPoolId:
+          Ref: CognitoUserPool
+    CognitoIdentityPool:
+      Type: AWS::Cognito::IdentityPool
+      Properties:
+        IdentityPoolName:
+          Fn::Join:
+            - '-'
+            - - ${self:custom.app-short-name}
+              - 'cognito-identity-pool'
+        AllowUnauthenticatedIdentities: true
+        CognitoIdentityProviders:
+          - ClientId: !Ref CognitoUserPoolClient
+            ProviderName: !GetAtt CognitoUserPool.ProviderName

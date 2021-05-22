@@ -1,0 +1,39 @@
+{
+  "name": "the-evolved-alligator-api",
+  "version": "1.0.0",
+  "description": "The Evolved Alligator API",
+  "main": "index.js",
+  "scripts": {
+    "test": "npm test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dfquicazanr/the-evolved-alligator-api.git"
+  },
+  "keywords": [
+    "serverless",
+    "typescript",
+    "AWS"
+  ],
+  "author": "Daniel Quicazán",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/dfquicazanr/the-evolved-alligator-api/issues"
+  },
+  "homepage": "https://github.com/dfquicazanr/the-evolved-alligator-api#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.76",
+    "@types/node": "^15.6.0",
+    "@types/serverless": "^1.78.28",
+    "fork-ts-checker-webpack-plugin": "^6.2.10",
+    "serverless": "^2.42.0",
+    "serverless-offline": "^7.0.0",
+    "serverless-webpack": "^5.5.0",
+    "ts-loader": "^9.2.2",
+    "ts-node": "^9.1.1",
+    "tsconfig-paths-webpack-plugin": "^3.5.1",
+    "typescript": "^4.2.4",
+    "webpack": "^5.37.1",
+    "webpack-node-externals": "^3.0.0"
+  }
+}

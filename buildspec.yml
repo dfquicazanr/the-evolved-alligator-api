@@ -1,0 +1,23 @@
+version: 0.2
+
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 12
+    commands:
+      - npm i -g serverless
+      - npm install -g json2yaml
+  build:
+    commands:
+      - npm i
+      - cd layers/dependencies/nodejs && npm i && npm run build && cd ../../..
+      - sls package
+      - json2yaml .serverless/cloudformation-template-update-stack.json > .serverless/cloudformation-template-update-stack.yml
+      - cp layers/dependencies/nodejs.zip .serverless/
+      - /bin/bash ./s3push.sh
+      - aws s3api put-object --bucket tea-backend-build --key cloudformation-template-update-stack.yml --body .serverless/cloudformation-template-update-stack.yml
+artifacts:
+  type: zip
+  files:
+    - template.yml

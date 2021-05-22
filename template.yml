@@ -1,0 +1,7 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: TEA API substacks
+Resources:
+  TeaAPIStack:
+    Type: AWS::CloudFormation::Stack
+    Properties:
+      TemplateURL: https://tea-backend-build.s3.amazonaws.com/cloudformation-template-update-stack.yml
