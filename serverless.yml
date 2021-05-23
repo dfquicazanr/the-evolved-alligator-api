@@ -2,7 +2,7 @@ service: tea-api
 
 custom:
   app-name: the-evolved-alligator-api
-  app-short-anme: tea
+  app-short-name: tea
   webpack:
     webpackConfig: ./webpack.config.js
     includeModules: true
