@@ -119,7 +119,7 @@ resources:
     CognitoUserPoolDomain:
       Type: AWS::Cognito::UserPoolDomain
       Properties:
-        Domain: remona
+        Domain: ${self:custom.app-short-name}
         UserPoolId:
           Ref: CognitoUserPool
     CognitoIdentityPool:
