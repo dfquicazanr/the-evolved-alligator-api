@@ -56,7 +56,7 @@ provider:
             - !GetAtt CognitoUserPool.Arn
 
 layers:
-  DependenciesLambdaLayer:
+  dependencies:
     name: tea-dependencies
     description: Dependencies
     compatibleRuntimes:
