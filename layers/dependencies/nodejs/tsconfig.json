@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "outDir": "nodejs/node_modules/tea-utils",
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": false,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "paths": {
+    }
+  }
+}
