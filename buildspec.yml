@@ -11,11 +11,11 @@ phases:
   build:
     commands:
       - npm i
-#      - cd layers/dependencies/nodejs && npm i && npm run build && cd ../../..
+      - cd layers/dependencies/nodejs && npm i && npm run build && cd ../../..
       - sls package
       - json2yaml .serverless/cloudformation-template-update-stack.json > .serverless/cloudformation-template-update-stack.yml
-#      - cp layers/dependencies/nodejs.zip .serverless/
-#      - /bin/bash ./s3push.sh
+      - cp layers/dependencies/nodejs.zip .serverless/
+      - /bin/bash ./s3push.sh
       - aws s3api put-object --bucket tea-backend-build --key cloudformation-template-update-stack.yml --body .serverless/cloudformation-template-update-stack.yml
 artifacts:
   type: zip

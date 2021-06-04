@@ -1,7 +1,7 @@
 service: tea-api
 
 custom:
-  app-name: the-evolved-alligator-api
+  app-name: the-evolved-alligator
   app-short-name: tea
   webpack:
     webpackConfig: ./webpack.config.js
@@ -56,8 +56,29 @@ provider:
             - !GetAtt CognitoUserPool.Arn
 
 layers:
+  DependenciesLambdaLayer:
+    name: tea-dependencies
+    description: Dependencies
+    compatibleRuntimes:
+      - nodejs12.x
+    retain: false
+    package:
+      artifact: layers/dependencies/nodejs.zip
 
 functions:
+  GetS3SignedUrl:
+    package:
+      include:
+        - src/files/get-signed-url/get-signed-url.ts
+    layers:
+      - { Ref: DependenciesLambdaLayer }
+    handler: src/files/get-signed-url/get-signed-url.handler
+    events:
+      - http:
+          path: files/signed-url
+          method: get
+          cors: ${self:custom.cors}
+          authorizer: ${self:custom.authorizer}
 
 resources:
   Resources:
@@ -134,3 +155,81 @@ resources:
         CognitoIdentityProviders:
           - ClientId: !Ref CognitoUserPoolClient
             ProviderName: !GetAtt CognitoUserPool.ProviderName
+    TeaDynamoDbTable:
+      Type: 'AWS::DynamoDB::Table'
+      DeletionPolicy: Delete
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: pk
+            AttributeType: S
+          - AttributeName: sk
+            AttributeType: S
+          - AttributeName: lsi1
+            AttributeType: S
+          - AttributeName: lsi2
+            AttributeType: S
+        KeySchema:
+          - AttributeName: pk
+            KeyType: HASH
+          - AttributeName: sk
+            KeyType: RANGE
+        LocalSecondaryIndexes:
+          - IndexName: lsi1-index
+            KeySchema:
+              - AttributeName: pk
+                KeyType: HASH
+              - AttributeName: lsi1
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: lsi2-index
+            KeySchema:
+              - AttributeName: pk
+                KeyType: HASH
+              - AttributeName: lsi2
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+        BillingMode: PAY_PER_REQUEST
+        TableName:
+          Fn::Join:
+            - '-'
+            - - ${self:custom.app-name}
+              - 'table'
+    PostsS3Bucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName:
+          Fn::Join:
+            - '-'
+            - - ${self:custom.app-name}
+              - posts
+        AccessControl: PublicRead
+        BucketEncryption:
+          ServerSideEncryptionConfiguration:
+            - ServerSideEncryptionByDefault:
+                SSEAlgorithm: AES256
+        VersioningConfiguration:
+          Status: Suspended
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders: [ '*' ]
+              AllowedMethods: [ GET, PUT ]
+              AllowedOrigins: [ '*' ]
+              Id: CORSRuleId1
+              MaxAge: '3600'
+    PostS3BucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: !Ref PostsS3Bucket
+        PolicyDocument:
+          Statement:
+            - Action:
+                - 's3:GetObject'
+              Effect: Allow
+              Resource: !Join
+                - ''
+                - - 'arn:aws:s3:::'
+                  - !Ref PostsS3Bucket
+                  - /*
+              Principal: '*'
