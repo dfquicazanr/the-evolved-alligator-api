@@ -26,12 +26,12 @@ custom:
     claims:
       - email
 
-  plugins:
-    - serverless-webpack
-    - serverless-offline
+plugins:
+  - serverless-webpack
+  - serverless-offline
 
 package:
-  individually: true
+  individually: false
   exclude:
     - buildspec.yml
     - .idea

@@ -4,7 +4,7 @@
   "description": "The Evolved Alligator API",
   "main": "index.js",
   "scripts": {
-    "test": "npm test"
+    "start": "serverless offline start"
   },
   "repository": {
     "type": "git",
