@@ -46,20 +46,20 @@ provider:
     role:
       statements:
         - Effect: Allow
-            Action:
-              - dynamodb:Query
-              - dynamodb:Scan
-              - dynamodb:GetItem
-              - dynamodb:PutItem
-              - dynamodb:UpdateItem
-              - dynamodb:DeleteItem
-              - dynamodb:BatchWriteItem
-            Resource:
-              - !GetAtt TeaDynamoDbTable.Arn
-              - !Join
-                - ''
-                - - !GetAtt TeaDynamoDbTable.Arn
-                  - "/index/*"
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:BatchWriteItem
+          Resource:
+            - !GetAtt TeaDynamoDbTable.Arn
+            - !Join
+              - ''
+              - - !GetAtt TeaDynamoDbTable.Arn
+                - "/index/*"
         - Effect: Allow
           Action:
             - cognito-idp:AdminCreateUser
