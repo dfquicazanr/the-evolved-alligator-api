@@ -92,6 +92,21 @@ layers:
       artifact: layers/dependencies/nodejs.zip
 
 functions:
+
+  CreatePost:
+    package:
+      include:
+        - src/posts/create/create.ts
+    layers:
+      - { Ref: DependenciesLambdaLayer }
+    handler: src/posts/create/create.handler
+    events:
+      - http:
+          path: posts
+          method: post
+          cors: ${self:custom.cors}
+          authorizer: ${self:custom.authorizer}
+
   GetS3SignedUrl:
     package:
       include:
