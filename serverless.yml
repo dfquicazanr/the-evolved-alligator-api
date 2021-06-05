@@ -46,6 +46,21 @@ provider:
     role:
       statements:
         - Effect: Allow
+            Action:
+              - dynamodb:Query
+              - dynamodb:Scan
+              - dynamodb:GetItem
+              - dynamodb:PutItem
+              - dynamodb:UpdateItem
+              - dynamodb:DeleteItem
+              - dynamodb:BatchWriteItem
+            Resource:
+              - !GetAtt TeaDynamoDbTable.Arn
+              - !Join
+                - ''
+                - - !GetAtt TeaDynamoDbTable.Arn
+                  - "/index/*"
+        - Effect: Allow
           Action:
             - cognito-idp:AdminCreateUser
             - cognito-idp:AdminDeleteUser
@@ -54,6 +69,17 @@ provider:
             - cognito-idp:ChangePassword
           Resource:
             - !GetAtt CognitoUserPool.Arn
+        - Effect: Allow
+          Action:
+            - s3:GetObject
+            - s3:PutObject
+            - s3:DeleteObject
+          Resource:
+            - !GetAtt PostsS3Bucket.Arn
+            - !Join
+              - '/'
+              - - !GetAtt PostsS3Bucket.Arn
+                - "*"
 
 layers:
   dependencies:
