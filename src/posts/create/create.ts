@@ -12,7 +12,7 @@ export const handler = async (event) => {
   const file = await s3Service.getItem('tea-posts', fileUrl.split('https://tea-posts.s3.amazonaws.com/'));
   console.log(file);
   const dynamoClient = new DynamoService();
-  const result = await dynamoClient.putItem('tea-table', 'post', itemKey('g'), attributes);
+  const result = await dynamoClient.putItem('tea-table', 'post', itemKey('post'), attributes);
   console.log(result);
   return HttpResponse.success(result.Items);
 }
