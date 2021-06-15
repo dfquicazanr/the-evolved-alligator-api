@@ -13,9 +13,9 @@ export const handler = async (event) => {
   const postKey = itemKey('post')
   resources = resources.map(resource => ({...resource, s3Path: `${datePath}/${postKey}/${sanitize(resource.filename)}`}));
   console.log(resources);
+  const s3Service = new S3Service();
   resources = await resources.map(async resource => ({...resource, s3SignedUrl: await s3Service.getSignedS3Url('tea-posts', resource.s3Path)}));
   console.log(resources);
-  const s3Service = new S3Service();
   const dynamoClient = new DynamoService();
   const result = await dynamoClient.putItem('tea-table', 'post', itemKey('post'), attributes);
   console.log(result);
