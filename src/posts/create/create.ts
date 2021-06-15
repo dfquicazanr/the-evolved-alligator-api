@@ -22,7 +22,7 @@ export const handler = async (event) => {
   const dynamoClient = new DynamoService();
   const result = await dynamoClient.putItem('tea-table', 'post', postKey, {...attributes, resources});
   console.log(result);
-  return HttpResponse.success({title, date, postKey, resourcesWithSignedUrls});
+  return HttpResponse.success({title, date, postKey, resources: resourcesWithSignedUrls});
 }
 
 const addFilePathToResources = (resources, postKey, datePath) =>
