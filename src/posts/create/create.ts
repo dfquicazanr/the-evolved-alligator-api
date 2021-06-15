@@ -13,20 +13,25 @@ export const handler = async (event) => {
   const datePath = dateToPath(new Date(date));
   const postKey = itemKey('post')
 
-  resources = resources.map(resource => ({...resource, filePath: `${datePath}/${postKey}/${sanitize(resource.filename)}`}));
+  resources = addFilePathToResources(resources, postKey, datePath);
 
   console.log(resources);
   const s3Service = new S3Service();
-  resources = await Promise.all(resources.map(async resource => (
-    {
-      ...resource,
-      s3SignedUrl: await s3Service.getSignedS3Url('tea-posts', resource.filePath),
-      filePath: `https://tea-posts.s3.amazonaws.com/${resource.filePath}`
-    }
-  )));
-  console.log(resources);
+  const resourcesWithSignedUrls = await addS3SignedUrlsToResources(resources, s3Service);
+  console.log(resourcesWithSignedUrls);
   const dynamoClient = new DynamoService();
-  const result = await dynamoClient.putItem('tea-table', 'post', postKey, attributes);
+  const result = await dynamoClient.putItem('tea-table', 'post', postKey, {...attributes, resources});
   console.log(result);
-  return HttpResponse.success({title, date, postKey, resources});
+  return HttpResponse.success({title, date, postKey, resourcesWithSignedUrls});
 }
+
+const addFilePathToResources = (resources, postKey, datePath) =>
+  resources.map(resource => ({...resource, filePath: `${datePath}/${postKey}/${sanitize(resource.filename)}`}));
+
+const addS3SignedUrlsToResources = async (resources, s3Service) => Promise.all(resources.map(async resource => (
+  {
+    ...resource,
+    s3SignedUrl: await s3Service.getSignedS3Url('tea-posts', resource.filePath),
+    filePath: `https://tea-posts.s3.amazonaws.com/${resource.filePath}`
+  }
+)));
