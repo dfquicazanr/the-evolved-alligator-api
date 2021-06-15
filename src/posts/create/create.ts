@@ -9,17 +9,24 @@ export const handler = async (event) => {
   const attributes = HttpEvent.extractBody(event);
   console.log(attributes);
   let { resources } = attributes;
-  const datePath = dateToPath(new Date());
+  const { title, date } = attributes;
+  const datePath = dateToPath(new Date(date));
   const postKey = itemKey('post')
-  resources = resources.map(resource => ({...resource, s3Path: `${datePath}/${postKey}/${sanitize(resource.filename)}`}));
+
+  resources = resources.map(resource => ({...resource, filePath: `${datePath}/${postKey}/${sanitize(resource.filename)}`}));
+
   console.log(resources);
   const s3Service = new S3Service();
   resources = await Promise.all(resources.map(async resource => (
-    {...resource, s3SignedUrl: await s3Service.getSignedS3Url('tea-posts', resource.s3Path)}
+    {
+      ...resource,
+      s3SignedUrl: await s3Service.getSignedS3Url('tea-posts', resource.filePath),
+      filePath: `https://tea-posts.s3.amazonaws.com/${resource.filePath}`
+    }
   )));
   console.log(resources);
   const dynamoClient = new DynamoService();
-  const result = await dynamoClient.putItem('tea-table', 'post', itemKey('post'), attributes);
+  const result = await dynamoClient.putItem('tea-table', 'post', postKey, attributes);
   console.log(result);
-  return HttpResponse.success(result.Items);
+  return HttpResponse.success({title, date, postKey, resources});
 }
