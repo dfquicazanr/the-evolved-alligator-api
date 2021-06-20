@@ -13,7 +13,8 @@ export const handler = async (event) => {
   const datePath = dateToPath(new Date(date));
   const postKey = itemKey('post')
 
-  resources = addFilePathToResources(resources, postKey, datePath);
+  resources = addObjectKeyToResources(resources, postKey, datePath);
+  resources = addFilePathToResources(resources);
 
   console.log(resources);
   const s3Service = new S3Service();
@@ -25,13 +26,25 @@ export const handler = async (event) => {
   return HttpResponse.success({title, date, postKey, resources: resourcesWithSignedUrls});
 }
 
-const addFilePathToResources = (resources, postKey, datePath) =>
-  resources.map(resource => ({...resource, filePath: `${datePath}/${postKey}/${sanitize(resource.filename)}`}));
+const addObjectKeyToResources = (resources, postKey, datePath) =>
+  resources.map(resource => (
+    {
+      ...resource,
+      objectKey: `${datePath}/${postKey}/${sanitize(resource.filename)}`
+    })
+  );
+
+const addFilePathToResources = (resources) =>
+  resources.map(resource => (
+    {
+      ...resource,
+      filePath: `https://tea-posts.s3.amazonaws.com/${resource.objectKey}`
+    })
+  );
 
 const addS3SignedUrlsToResources = async (resources, s3Service) => Promise.all(resources.map(async resource => (
   {
     ...resource,
-    s3SignedUrl: await s3Service.getSignedS3Url('tea-posts', resource.filePath),
-    filePath: `https://tea-posts.s3.amazonaws.com/${resource.filePath}`
+    s3SignedUrl: await s3Service.getSignedS3Url('tea-posts', resource.objectKey)
   }
 )));
