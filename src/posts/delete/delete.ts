@@ -18,5 +18,5 @@ export const handler = async (event) => {
 }
 
 const deleteS3Resources = async (resources, s3Service: S3Service) => Promise.all(
-  resources.map(async resource => await s3Service.deleteItem('tea-posts', resource.postKey))
+  resources.map(async resource => await s3Service.deleteItem('tea-posts', resource.objectKey))
 );
