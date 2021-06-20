@@ -120,6 +120,20 @@ functions:
           method: get
           cors: ${self:custom.cors}
 
+  DeletePost:
+    package:
+      include:
+        - src/posts/delete/delete.ts
+    layers:
+      - { Ref: DependenciesLambdaLayer }
+    handler: src/posts/delete/delete.handler
+    events:
+      - http:
+          path: posts/{postKey}
+          method: delete
+          cors: ${self:custom.cors}
+          authorizer: ${self:custom.authorizer}
+
   GetS3SignedUrl:
     package:
       include:
