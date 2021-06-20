@@ -107,6 +107,19 @@ functions:
           cors: ${self:custom.cors}
           authorizer: ${self:custom.authorizer}
 
+  ListPosts:
+    package:
+      include:
+        - src/posts/list/list.ts
+    layers:
+      - { Ref: DependenciesLambdaLayer }
+    handler: src/posts/list/list.handler
+    events:
+      - http:
+          path: posts
+          method: get
+          cors: ${self:custom.cors}
+
   GetS3SignedUrl:
     package:
       include:
