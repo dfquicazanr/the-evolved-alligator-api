@@ -9,8 +9,9 @@ export const handler = async (event) => {
   const { Item: postToDelete } = await dynamoClient.getItem('tea-table', 'post', postKey);
   console.log(postToDelete);
   const s3Service = new S3Service();
-  await deleteS3Resources(postToDelete.resources, s3Service);
 
+  const s3Result =await deleteS3Resources(postToDelete.resources, s3Service);
+  console.log(s3Result);
 
   const result = await dynamoClient.deleteItem('tea-table', 'post', postKey);
   console.log(result);
