@@ -1,5 +1,5 @@
 import {HttpEvent, HttpResponse} from "~utils/http-utils";
-import { sanitize } from "~utils/s3-key-sanitizer";
+import { sanitize } from "~utils/key-sanitizer";
 import {S3Service} from "~utils/s3-service";
 
 export const handler = async (event) => {
