@@ -2,16 +2,15 @@ import {HttpEvent, HttpResponse} from "~utils/http-utils";
 import {sanitize} from "~utils/key-sanitizer";
 import {S3Service} from "~utils/s3-service";
 import {DynamoService} from "~utils/dynamo-service";
-import {dateKey} from "~utils/keys-utils";
 import {dateToPath} from "~utils/date-utils";
 
 export const handler = async (event) => {
+  const { postKey } = HttpEvent.extractParams(event);
   const attributes = HttpEvent.extractBody(event);
   console.log(attributes);
   let { resources } = attributes;
   const { title, date } = attributes;
   const datePath = dateToPath(new Date(date));
-  const postKey = `${dateKey('p', new Date(date))}-${sanitize(title)}`;
 
   resources = addObjectKeyToResources(resources, postKey, datePath);
   resources = addFilePathToResources(resources);

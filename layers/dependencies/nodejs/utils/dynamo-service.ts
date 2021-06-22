@@ -12,7 +12,7 @@ export class DynamoService {
     return this.dynamoDB.scan({TableName: tableName}).promise();
   }
 
-  query(tableName: string, pk: string, sk?: string) {
+  query(tableName: string, pk: string, sk?: string): Promise<any> {
     const params = {
       TableName: tableName,
       KeyConditionExpression: `pk = :pk${sk ?` and sk = :sk`: ``}`,

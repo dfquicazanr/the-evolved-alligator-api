@@ -22,3 +22,5 @@ export const randomAlphaNumericStringForcedAlphaNumeric = (length) => {
 }
 
 export const itemKey = (prefix: string) => `${prefix}-${uuidv4()}`;
+
+export const dateKey = (prefix: string, date: Date) => `${prefix}-${date.getFullYear()}-${(date.getMonth() + 1 + '').padStart(2, '0')}-${(date.getDate() + '').padStart(2, '0')}`;
