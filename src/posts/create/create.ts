@@ -11,7 +11,7 @@ export const handler = async (event) => {
   let { resources } = attributes;
   const { title, date } = attributes;
   const datePath = dateToPath(new Date(date));
-  const postKey = `${dateKey('p', new Date(date))}-${sanitize(title)}`;
+  const postKey = `${dateKey('p', new Date(date))}-${sanitize(title.toLowerCase())}`;
 
   resources = addObjectKeyToResources(resources, postKey, datePath);
   resources = addFilePathToResources(resources);

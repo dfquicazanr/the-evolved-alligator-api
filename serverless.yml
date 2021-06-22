@@ -93,6 +93,32 @@ layers:
 
 functions:
 
+  ListPosts:
+    package:
+      include:
+        - src/posts/list/list.ts
+    layers:
+      - { Ref: DependenciesLambdaLayer }
+    handler: src/posts/list/list.handler
+    events:
+      - http:
+          path: posts
+          method: get
+          cors: ${self:custom.cors}
+
+  GetPosts:
+    package:
+      include:
+        - src/posts/get/get.ts
+    layers:
+      - { Ref: DependenciesLambdaLayer }
+    handler: src/posts/get/get.handler
+    events:
+      - http:
+          path: posts/{postKey}
+          method: get
+          cors: ${self:custom.cors}
+
   CreatePost:
     package:
       include:
@@ -107,18 +133,19 @@ functions:
           cors: ${self:custom.cors}
           authorizer: ${self:custom.authorizer}
 
-  ListPosts:
+  UpdatePost:
     package:
       include:
-        - src/posts/list/list.ts
+        - src/posts/update/update.ts
     layers:
       - { Ref: DependenciesLambdaLayer }
-    handler: src/posts/list/list.handler
+    handler: src/posts/update/update.handler
     events:
       - http:
-          path: posts
-          method: get
+          path: posts/{postKey}
+          method: put
           cors: ${self:custom.cors}
+          authorizer: ${self:custom.authorizer}
 
   DeletePost:
     package:
